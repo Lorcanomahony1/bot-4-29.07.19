@@ -1,0 +1,56 @@
+
+from selenium import webdriver
+from urllib.request import Request, urlopen
+from bs4 import BeautifulSoup as soup
+import time
+import re
+
+
+
+
+
+pages = (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26) 
+
+list_of_links = []
+list_of_emails = []
+Keywordlist = ('KITCHEN','General','Labourer','U21')
+
+for page in pages:
+
+	url = 'http://classifieds.advertiser.ie/jobs/?cat=3&r=13&sort=1&rr=10&p={}'.format(page)
+
+	req = Request(url , headers={'User-Agent': 'Mozilla/5.0'})
+
+	webpage = urlopen(req).read()
+	page_soup = soup(webpage, "html.parser")
+
+
+	divs = page_soup.findAll("div", {"class": "resultItemMainHolder"})
+
+	for div in divs:
+	    	list_of_links.append("http://classifieds.advertiser.ie" + div.find('a')['href'])
+
+
+
+
+
+for link in list_of_links:
+
+		req = Request(link , headers={'User-Agent': 'Mozilla/5.0'})
+
+		webpage = urlopen(req).read()
+
+		page_soup = soup(webpage, "html.parser")
+
+		divtext = page_soup.find("div", {"class": "description"}).getText()
+
+		if page_soup.find("div", {"class": "description"}).getText():
+
+			emails = re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", divtext)
+
+			print(emails)
+
+		
+
+
+
